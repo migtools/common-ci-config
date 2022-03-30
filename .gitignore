@@ -1,0 +1,7 @@
+# Python sample app
+*.egg-info/
+build/
+*.egg
+
+# Folder created by example Makefile
+.venv/
