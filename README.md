@@ -13,7 +13,7 @@ Within your project (e.g. Pelorus):
   $ cp -r common-ci-config/makefile/* ./path-to-your-project
 
 3. Copy configuration file to your project
-  $ cp ./path-to-your-project/makefile/python/pre-commit-config.yaml  ./path-to-your-project/
+  $ cp ./path-to-your-project/makefile/.konveyor/python/.pre-commit-config.yaml  ./path-to-your-project/
 
 4. Use sample tests:
   $ make tests

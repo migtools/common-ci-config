@@ -1,5 +1,7 @@
 ### Konveyor Makefile template
 
+MK_SCRIPTS_DIR=.konveyor
+
 ifndef LANG_DIR
   LANG_DIR=python
 endif
@@ -22,14 +24,14 @@ clean-dev-env:
 	$(MAKE) $(LANG_DIR)-clean-dev-env
 
 ### Python environment is needed to run pre-commit CLI
-include ./python/setup_env.mk
+include ./$(MK_SCRIPTS_DIR)/python/setup_env.mk
 setup-pre-commit: $(PYTHON_VENV)
 	. ${PYTHON_VENV}/bin/activate && pip install pre-commit \
 	  > ${PYTHON_VENV}/pre-commit-install.log
 
 ### Include lanuguage specific parts of the Makefile
-ifneq ("$(wildcard $(LANG_DIR)/tests.mk)","")
-    include ./$(LANG_DIR)/tests.mk
+ifneq ("$(wildcard ./$(MK_SCRIPTS_DIR)/$(LANG_DIR)/tests.mk)","")
+    include ./$(MK_SCRIPTS_DIR)/$(LANG_DIR)/tests.mk
 endif
 
 # Include project specific Makefile
