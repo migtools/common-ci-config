@@ -12,7 +12,7 @@ endif
 
 # Makefile targets which are common across all projects
 .PHONY: tests
-.PHONY: dev-env clean-dev-env
+.PHONY: dev-env go-away
 
 tests:
 	$(MAKE) $(LANG_DIR)-tests
@@ -20,14 +20,19 @@ tests:
 dev-env:
 	$(MAKE) $(LANG_DIR)-dev-env
 
-clean-dev-env:
+go-away:
 	$(MAKE) $(LANG_DIR)-clean-dev-env
+	$(MAKE) pre-commit-clean-env
 
 ### Python environment is needed to run pre-commit CLI
-include ./$(MK_SCRIPTS_DIR)/python/setup_env.mk
-setup-pre-commit: $(PYTHON_VENV)
+include ./$(MK_SCRIPTS_DIR)/pre-commit/setup_env.mk
+setup-pre-commit: pre-commit-$(PYTHON_VENV)
 	. ${PYTHON_VENV}/bin/activate && pip install pre-commit \
 	  > ${PYTHON_VENV}/pre-commit-install.log
+
+ifneq ("$(wildcard ./$(MK_SCRIPTS_DIR)/$(LANG_DIR)/setup_env.mk)","")
+    include ./$(MK_SCRIPTS_DIR)/$(LANG_DIR)/setup_env.mk
+endif
 
 ### Include lanuguage specific parts of the Makefile
 ifneq ("$(wildcard ./$(MK_SCRIPTS_DIR)/$(LANG_DIR)/tests.mk)","")
