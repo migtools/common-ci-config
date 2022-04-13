@@ -2,9 +2,7 @@
 
 MK_SCRIPTS_DIR=.konveyor
 
-ifndef LANG_DIR
-  LANG_DIR=python
-endif
+LANG_DIR ?= python
 
 ifndef PROJECT_MAKEFILE
   PROJECT_MAKEFILE=Makefile.mk

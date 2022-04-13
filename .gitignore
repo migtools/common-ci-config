@@ -1,3 +1,5 @@
+# Ignore different editor stuff
+.history/
 # Python sample app
 *.egg-info/
 build/
