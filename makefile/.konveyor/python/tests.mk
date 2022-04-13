@@ -1,7 +1,7 @@
-### Important, the LANG_DIR must match one from Makefile
-LANG_DIR=python
+LOCAL_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+LOCAL_LANG_DIR = $(notdir $(patsubst %/,%,$(dir $(LOCAL_PATH))))
 
-$(LANG_DIR)-tests:
+$(LOCAL_LANG_DIR)-tests:
 	$(MAKE) pre-commit
 
 pre-commit: setup-pre-commit
