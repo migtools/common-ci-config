@@ -6,3 +6,6 @@ $(LOCAL_LANG_DIR)-tests:
 
 pre-commit: setup-pre-commit
 	. ${PYTHON_VENV}/bin/activate && pre-commit
+
+ansible-lint: setup-pre-commit
+	. ${PYTHON_VENV}/bin/activate && pre-commit run ansible-lint
