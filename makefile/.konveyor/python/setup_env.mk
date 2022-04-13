@@ -1,5 +1,5 @@
-### Important, the LANG_DIR must match one from Makefile
-LOCAL_LANG_DIR=python
+LOCAL_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+LOCAL_LANG_DIR = $(notdir $(patsubst %/,%,$(dir $(LOCAL_PATH))))
 
 $(LOCAL_LANG_DIR)-dev-env: $(PYTHON_VENV)
 	$(info **** To run VENV: $$source ${PYTHON_VENV}/bin/activate)

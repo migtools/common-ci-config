@@ -1,4 +1,3 @@
-### Important, the LANG_DIR must match one from Makefile
 LOCAL_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 LOCAL_LANG_DIR = $(notdir $(patsubst %/,%,$(dir $(LOCAL_PATH))))
 
