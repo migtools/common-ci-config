@@ -8,16 +8,28 @@ ifndef PROJECT_MAKEFILE
   PROJECT_MAKEFILE=Makefile.mk
 endif
 
+# note the following is required for the makefile help
+## TARGET: DESCRIPTION
+## ------: -----------
+## help: print each make target with a description
+.PHONY: help
+help:
+	@echo ""
+	@(printf ""; sed -n 's/^## //p' Makefile) | column -t -s :
+
 # Makefile targets which are common across all projects
 .PHONY: tests
 .PHONY: dev-env go-away
 
+## tests: execute the available unit or itegration tests
 tests:
 	$(MAKE) $(LANG_DIR)-tests
 
+## dev-env: create the language specific development environment
 dev-env:
 	$(MAKE) $(LANG_DIR)-dev-env
 
+## go-away: remove the development environment files added by the dev-env command
 go-away:
 	$(MAKE) $(LANG_DIR)-clean-dev-env
 	$(MAKE) pre-commit-clean-env
