@@ -316,12 +316,10 @@ fi
 
 if should_cli_be_installed "go" "${cli_tools_arr[@]}" && \
     ! [ -x "$(command -v "${VENV}/bin/go")" ]; then
-    GO_INSTALL_LINK="${GO_INSTALL_LINK_NO_ARCH}.darwin-amd64.tar.gz"
+    KERNEL_NAME="$(uname -s | awk '{print tolower($0)}')" # e.g. Linux / Darwin
+    GO_INSTALL_LINK="${GO_INSTALL_LINK_NO_ARCH}.${KERNEL_NAME}-amd64.tar.gz"
     download_file_from_url "${GO_INSTALL_LINK}" "${DWN_DIR}"
     GO_CLIENT_PATH="${DWN_DIR}"/$(basename "${GO_INSTALL_LINK}")
-    extract_file_to_dir "${GO_CLIENT_PATH}" "${VENV}/bin/" "go/bin/go"
-    mv "${VENV}/bin/go/bin/go" "${VENV}/bin/go.bin"
-    rmdir "${VENV}/bin/go/bin"
-    rmdir "${VENV}/bin/go"
-    mv "${VENV}/bin/go.bin" "${VENV}/bin/go"
+    tar -xvf "${GO_CLIENT_PATH}" -C "${VENV}"
+    ln -s "../go/bin/go" "${VENV}/bin/go"
 fi
