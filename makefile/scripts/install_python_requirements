@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# Copyright Red Hat
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+
+# Exit script if running from outside of Python Virtual Environment
+[ -z "$VIRTUAL_ENV" ] && echo "This script must be executed from an active Python Virtual Environment, which was not found, exiting..."  && exit 1
+
+# Check if pip CLI is installed in the VENV
+type pip > /dev/null
+pip_found=$?
+if [[ $pip_found != 0 ]]; then
+    echo "pip executable not found in the PATH, exiting..."
+    exit 1
+fi
+
+# Get the full absolute path to the script. Needed while calling the script
+# via various partial paths or sourcing the file from shell
+# BASH_SOURCE[0] is safer then $0 when sourcing.
+# We enter the dirname of the invoked script and then get the current
+# path of the script using pwd
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Match the .venv created by the Makefile
+DEFAULT_ROOT_PATH=$(pwd "${SCRIPT_DIR}/../")
+
+# File names from: https://pypi.org/project/requirements-dev.txt/
+# and commonly used dev-requirements.txt
+declare -a REQUIREMENTS_FILES=(
+    requirements.txt
+    rrequirements.txt
+    requirements-txt
+    rrequirements-txt
+)
+
+declare -a DEV_REQUIREMENTS_FILES=(
+    requirements-dev.txt
+    dev-requirements.txt
+    requirements-dev
+    requirements-test.txt
+    requirements-test
+)
+
+function install_deps_from_reqs() {
+    local requirements_folder=$1
+    shift
+    local requirements_list=("$@")
+    for file in ${requirements_list[@]};
+    do
+      if [ -r "${requirements_folder}/${file}" ]; then
+          echo "Installing requirements from: ${requirements_folder}/${file}"
+          pip install -r "${requirements_folder}/${file}"
+      fi
+    done
+}
+
+function print_help() {
+    printf "\nUsage: %s [OPTION]... -d [DIR]\n\n" % "$0"
+    printf "\tStartup:\n"
+    printf "\t  -h\tprint this help\n"
+    printf "\t  -d\tabsolute path to top level requirements DIR\n"
+    printf "\n\tOptions:\n"
+    printf "\t  -r\tinstall runtime requirements only\n"
+
+    exit 0
+}
+
+runtime_only="false"
+
+while getopts "h?d:r" option; do
+    case "$option" in
+    h|\?) print_help;;
+    d)    search_directory=$OPTARG;;
+    r)    runtime_only="true";;
+    esac
+done
+
+if [ -z "${search_directory}" ]; then
+    SEARCH_DIR="${DEFAULT_ROOT_PATH}"
+else
+    SEARCH_DIR="${search_directory}"
+fi
+
+# Ensure latest version of pip is installed
+pip install --upgrade pip
+
+install_deps_from_reqs "${SEARCH_DIR}" "${REQUIREMENTS_FILES[@]}"
+if [ "${runtime_only}" != "true" ]; then
+    install_deps_from_reqs "${SEARCH_DIR}" "${DEV_REQUIREMENTS_FILES[@]}"
+fi
